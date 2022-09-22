@@ -13,18 +13,18 @@ pipeline{
         stage('Build'){
             steps{
                 sh "mvn clean package"
-                sh "sudo docker build . -t devopsforyou94/helloapp:${DOCKER_TAG} "
+                sh "sudo docker build . -t vamshikrishna42/helloapp:${DOCKER_TAG} "
                withCredentials([usernamePassword(credentialsId: 'dockercrd', passwordVariable: 'Docker_pwd', usernameVariable: 'Docker_user')]) {
-                    sh "sudo docker login -u devopsforyou94  -p ${Docker_pwd}"
+                    sh "sudo docker login -u vamshikrishna42  -p ${Docker_pwd}"
                 }
                 
-                sh "sudo docker push devopsforyou94/helloapp:${DOCKER_TAG} "
+                sh "sudo docker push vamshikrishna42/helloapp:${DOCKER_TAG} "
             }
         }
         
         stage('Deploy'){
             steps{
-              ansiblePlaybook credentialsId: '496c76de-ea13-4d0f-a945-fec687b54851', disableHostKeyChecking: true, extras: "-e DOCKER_TAG=${DOCKER_TAG}", installation: 'ansible', inventory: 'dev.inv', playbook: 'deploy-docker.yml'
+              ansiblePlaybook credentialsId: 'ansibleserver', disableHostKeyChecking: true, extras: "-e DOCKER_TAG=${DOCKER_TAG}", installation: 'ansible', inventory: 'dev.inv', playbook: 'deploy-docker.yml'
             }
         }
     }
